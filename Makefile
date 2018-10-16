@@ -76,6 +76,8 @@ SRC = main.c \
 	$(WRLIB)/str_buffer.c \
 	$(WRLIB)/wrConvert.c \
 	$(WRLIB)/wrMath.c \
+	$(WRDSP)/wrFilter.c \
+
 
 OBJDIR = .
 OBJS = $(SRC:%.c=$(OBJDIR)/%.o)

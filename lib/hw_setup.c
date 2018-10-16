@@ -1,5 +1,6 @@
 #include "hw_setup.h"
 
+#include "ll/adc.h"
 #include "ll/led.h"
 #include "ll/state.h"
 #include "ll/debug_usart.h"
@@ -10,8 +11,7 @@ void HW_Init( void )
 {
     LL_Led_Init();
     LL_State_Init();
-    //LL_ADC_Init();
-    //
+    LL_Adc_Init();
 
     LL_Test();
 }
@@ -20,6 +20,10 @@ void HW_Init( void )
 void HW_Process( void )
 {
     SelectVoltage( Dest_Flip, Volt_2 );
+    LL_Adc_Process();
+
+    U_PrintF(LL_Adc_Get( ADC_Left ));
+
 }
 
 void LL_Test( void )
@@ -30,5 +34,4 @@ void LL_Test( void )
     //if( LL_isSwitchDown(0) && LL_isSwitchDown(1) ){
     //    LL_Led_Set( LED_3, 1 );
     //}
-
 }
