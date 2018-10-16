@@ -221,7 +221,7 @@ float LL_Adc_Get( ADC_t chan )
                                    , 13 //ADC_Peak
                                    , 12 //ADC_Trough
                                    };
-    return (1.0 - 2.0 * awin_get_out( &adc_smooth[adc_chan_mapping[chan]] ));
+    return (awin_get_out( &adc_smooth[adc_chan_mapping[chan]] ));
 }
 // add smoothing & return float here
 #define i12bit (1.0/(float)(1<<12))

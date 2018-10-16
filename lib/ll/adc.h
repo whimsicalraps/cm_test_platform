@@ -52,7 +52,6 @@
 #define ADCx_CHANNEL_PIN15  GPIO_PIN_5
 #define ADCx_CHANNEL_PORT15 GPIOC
 
-
 #define ADCx_DMA_CHANNEL                DMA_CHANNEL_0
 #define ADCx_DMA_STREAM                 DMA2_Stream0
 
@@ -64,22 +63,22 @@
 #define ADC_WIN_AVG 4
 
 
-typedef enum{ ADC_RAW
-            , ADC_RAWn
-            , ADC_amp_RAW
-            , ADC_amp_RAWn
-            , ADC_12
-            , ADC_12n
-            , ADC_5
-            , ADC_5n
-            , ADC_Left
-            , ADC_Right
-            , ADC_Crease
-            , ADC_Fullwave
-            , ADC_Integral
-            , ADC_Follow
-            , ADC_Peak
-            , ADC_Trough
+typedef enum{ Get_RAW
+            , Get_RAWn
+            , Get_amp_RAW
+            , Get_amp_RAWn
+            , Get_12
+            , Get_12n
+            , Get_5
+            , Get_5n
+            , Get_Left
+            , Get_Right
+            , Get_Crease
+            , Get_Fullwave
+            , Get_Integral
+            , Get_Follow
+            , Get_Peak
+            , Get_Trough
 } ADC_t;
 
 void LL_Adc_Init( void );

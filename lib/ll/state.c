@@ -50,12 +50,12 @@ void LL_State_Init( void )
 
 void SelectVoltage( Destination_t d, Volts_t v )
 {
-    if( d < Dest_ENDOFCHANONE ){
+    if( d < Set_ENDOFCHANONE ){
         LL_DigiSwitch_Set( Chan_Source1, (uint8_t)v );
         LL_DigiSwitch_Set( Chan_Dest1, (uint8_t)d );
     } else {
         LL_DigiSwitch_Set( Chan_Source2, (uint8_t)v );
-        LL_DigiSwitch_Set( Chan_Dest2, (uint8_t)(d-Dest_ENDOFCHANONE-1) );
+        LL_DigiSwitch_Set( Chan_Dest2, (uint8_t)(d-Set_ENDOFCHANONE-1) );
     }
 }
 

@@ -6,7 +6,6 @@
 #include <stdlib.h>
 
 // low-level abstractions
-//#include "lib/ll/debug_hw.h"
 #include "lib/ll/debug_usart.h"
 #include "lib/hw_setup.h"
 
