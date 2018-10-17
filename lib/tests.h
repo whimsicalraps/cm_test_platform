@@ -63,10 +63,10 @@ static const TestT_t ttests[] =
                                 , Volt_5    , 100
                 , Get_Follow    , 2.91
                 }
-, { "LOCATION"  , Set_Crease    , Volt_0    , 100
-                                , Volt_5    , 500
-                , Get_Location  , 1.21
-                }
+//, { "LOCATION"  , Set_Crease    , Volt_0    , 100
+//                                , Volt_5    , 500
+//                , Get_Location  , 1.21
+//                }
 };
 
 typedef struct TestV_vec{

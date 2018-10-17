@@ -3,52 +3,63 @@
 #include <stm32f7xx_hal.h>
 
 #include "ll/debug_usart.h"
+#include "ll/led.h"
 #include "hw_setup.h"
 #include "wrMath.h"
 
 #define LENGTH(X) (sizeof X / sizeof X[0])
 #define POWER_STARTUP_DELAY    500
 #define VOLTAGE_SETTLING_DELAY 5
-#define TOLERANCE              (float)0.1 // percentage: 0.1 = 10%
+#define TOLERANCE              (float)0.15 // percentage: 0.1 = 10%
 #define VERBOSE 0
 
 static uint8_t _Test_inner( const TestV_t* test, float settle_time );
+uint8_t Test_T_relative( void );
 static uint8_t Test_PowerUp( void );
 static void Test_Failure( char* error );
 uint8_t Test_RunSuite( void )
 {
+    uint8_t error = 0; // this is binary mask
     // call this "run tests"
+    LL_Led_Set( LED_1, 1);
     if( Test_PowerUp() ){
         U_PrintLn("POWER ISSUE. SHUTTING DOWN");
         U_PrintNow();
+        error = 1;
         return 1;
     }
+
 // RUN TESTS
     // single voltage set & read
+    LL_Led_Set( LED_2, 1);
     int failures = 0;
     int tests_run = 0;
 
     int len = LENGTH(vtests);
     for( int i=0; i<len; i++ ){
-        if( Test_V( &vtests[i] ) ){ failures++; }
+        if( Test_V( &vtests[i] ) ){ error |= 0x2; failures++; }
     }
 
     len = LENGTH(vtests_vec);
     for( int i=0; i<len; i++ ){
-        if( Test_V_vec( &vtests_vec[i] ) ){ failures++; }
+        if( Test_V_vec( &vtests_vec[i] ) ){ error |= 0x2; failures++; }
     }
 
     len = LENGTH(vtests_vec2d);
     for( int i=0; i<len; i++ ){
-        if( Test_V_vec2d( &vtests_vec2d[i] ) ){ failures++; }
+        if( Test_V_vec2d( &vtests_vec2d[i] ) ){ error |= 0x2; failures++; }
         U_PrintNow(); // flush uart
     }
 
+// TIME-based tests
+    LL_Led_Set( LED_3, 1);
     len = LENGTH(ttests);
     for( int i=0; i<len; i++ ){
-        if( Test_T( &ttests[i] ) ){ failures++; }
+        if( Test_T( &ttests[i] ) ){ error |= 0x4; failures++; }
     }
 
+// special relative TIME test
+    if( Test_T_relative() ){ error |= 0x4; failures++; }
 
     LL_PowerOn_Set(0);
     if( failures ){
@@ -56,7 +67,7 @@ uint8_t Test_RunSuite( void )
         U_Print("\t"); U_PrintU16n(tests_run - failures); U_PrintLn(" successes");
         U_Print("\t"); U_PrintU16n(failures); U_PrintLn(" failures");
         U_PrintLn("\nTESTS FAILED");
-        return 1;
+        return error;
     }
     U_PrintLn("\nAll tests passed!");
     return 0;
@@ -168,6 +179,49 @@ uint8_t Test_T( const TestT_t* test )
         U_Print(": ");
     }
     return _Test_inner( &sub_test, test->read_delay );
+}
+
+uint8_t Test_T_relative( void )
+{
+    SelectVoltage( Set_Crease, Volt_0 );
+    float result = 0.0;
+    uint8_t error = 0;
+    while(1){
+        LL_Adc_Process();
+        result = GetVolts( Get_Location );
+        if( result < 0.1 ){
+            SelectVoltage( Set_Crease, Volt_5 );
+            HAL_Delay(100);
+        } else if( result > 2.2 ){
+            SelectVoltage( Set_Crease, Volt_n5 );
+            HAL_Delay(100);
+        } else { break; }
+    }
+    float expect_shift = 1.00;
+    if(result < 1.8){
+        TestT_t sub_test = { .name = "INTEGRAL"
+                           , .dest = Set_Crease
+                           , .rest_volts = Volt_0
+                           , .rest_delay = 0
+                           , .go_volts = Volt_5
+                           , .read_delay = 500
+                           , .channel = Get_Location
+                           , .expect = result + expect_shift
+                           };
+        error = Test_T( &sub_test );
+    } else {
+        TestT_t sub_test = { .name = "INTEGRAL"
+                           , .dest = Set_Crease
+                           , .rest_volts = Volt_0
+                           , .rest_delay = 0
+                           , .go_volts = Volt_n5
+                           , .read_delay = 500
+                           , .channel = Get_Location
+                           , .expect = result - expect_shift
+                           };
+        error = Test_T( &sub_test );
+    }
+    return error;
 
 }
 static uint8_t _Test_inner( const TestV_t* test, float settle_time )
@@ -177,7 +231,7 @@ static uint8_t _Test_inner( const TestV_t* test, float settle_time )
     HAL_Delay( settle_time ); // wait for stabilizing
     LL_Adc_Process(); // read the ADCs
     float result = GetVolts( test->channel );
-    float t_shift = _Abs(test->expect) < 1.0 ? 0.1 : 0.0;
+    float t_shift = _Abs(test->expect) < 1.0 ? 0.15 : 0.0;
     if( test->expect >= 0 ){
         if( result > (test->expect)*(1.0-TOLERANCE)-t_shift
          && result < (test->expect)*(1.0+TOLERANCE)+t_shift ){
