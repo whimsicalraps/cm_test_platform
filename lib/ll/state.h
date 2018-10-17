@@ -47,7 +47,7 @@ typedef enum{ Set_Left
             , Set_NA
             , Set_Peak1
             , Set_Trough
-            , Set_Flip
+            , Set_Crease
             , Set_NA1
             , Set_NA2
                 , Set_ENDOFCHANONE

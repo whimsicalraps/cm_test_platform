@@ -62,18 +62,18 @@
 #define ADC_VEC_AVG 32 //TODO refine this to match sampling rate
 #define ADC_WIN_AVG 4
 
-
-typedef enum{ Get_RAW
-            , Get_RAWn
-            , Get_amp_RAW
-            , Get_amp_RAWn
-            , Get_12
-            , Get_12n
-            , Get_5
-            , Get_5n
-            , Get_Left
-            , Get_Right
-            , Get_Crease
+                            //< add comment slashes against tested vals
+typedef enum{ Get_RAW       //
+            , Get_RAWn      //
+            , Get_amp_RAW   //
+            , Get_amp_RAWn  //
+            , Get_12        //
+            , Get_12n       //
+            , Get_5         //
+            , Get_5n        //
+            , Get_Left      //
+            , Get_Right     //
+            , Get_Crease    //
             , Get_Fullwave
             , Get_Integral
             , Get_Follow

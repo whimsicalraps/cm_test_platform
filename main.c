@@ -8,6 +8,7 @@
 // low-level abstractions
 #include "lib/ll/debug_usart.h"
 #include "lib/hw_setup.h"
+#include "lib/tests.h"
 
 // private fn prototypes
 static void SystemClock_Config(void);
@@ -31,8 +32,11 @@ int main(void)
     HW_Init();
 
 	U_PrintNow();  // print any queued debug messages
+    if( !Test_RunSuite() ){
+        //U_PrintLn("All tests passed!\n\n\n");
+        U_PrintLn("\n\n\n");
+    }
 	while(1){
-        HW_Process();
 	    U_PrintNow();  // print any queued debug messages
     }
 	return 0;
