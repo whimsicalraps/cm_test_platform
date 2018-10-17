@@ -42,19 +42,19 @@
 #define STATE_SW3_PIN			GPIO_PIN_15
 
 // change this to directly refer to functional names
-typedef enum{ Set_Left
-            , Set_Right
-            , Set_NA
-            , Set_Peak1
-            , Set_Trough
-            , Set_Crease
-            , Set_NA1
-            , Set_NA2
+typedef enum{ Set_Left      //
+            , Set_Right     //
+            , Set_NA        //
+            , Set_Peak1     //
+            , Set_Trough1   //
+            , Set_Crease    //
+            , Set_NA1       //
+            , Set_NA2       //
                 , Set_ENDOFCHANONE
-            , Set_XVCAOut
-            , Set_Peak2
-            , Set_Trough2
-            , Set_Fold
+            , Set_XVCAOut   //
+            , Set_Peak2     //
+            , Set_Trough2   //
+            , Set_Fold      //
 } Destination_t;
 
 typedef enum{ Volt_5

@@ -74,11 +74,11 @@ typedef enum{ Get_RAW       //
             , Get_Left      //
             , Get_Right     //
             , Get_Crease    //
-            , Get_Fullwave
-            , Get_Integral
-            , Get_Follow
-            , Get_Peak
-            , Get_Trough
+            , Get_Fullwave  //
+            , Get_Location
+            , Get_Follow    //
+            , Get_Peak      //
+            , Get_Trough    //
 } ADC_t;
 
 void LL_Adc_Init( void );

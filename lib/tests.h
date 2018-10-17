@@ -46,6 +46,29 @@ static const TestV_t vtests[] =
                 }
 };
 
+typedef struct TestT{
+    char*           name;
+    Destination_t   dest;
+    Volts_t         rest_volts;
+    int             rest_delay;
+    Volts_t         go_volts;
+    int             read_delay;
+    ADC_t           channel;
+    float           expect;
+} TestT_t;
+
+// These likely need a wider tolerance window
+static const TestT_t ttests[] =
+{ { "FOLLOW"    , Set_Fold      , Volt_0    , 100
+                                , Volt_5    , 100
+                , Get_Follow    , 2.91
+                }
+, { "LOCATION"  , Set_Crease    , Volt_0    , 100
+                                , Volt_5    , 500
+                , Get_Location  , 1.21
+                }
+};
+
 typedef struct TestV_vec{
     char*           name;
     Destination_t   dest;
@@ -121,6 +144,31 @@ static const TestV_vec2d_t vtests_vec2d[] =
                , 0.04  ,1.73 ,3.35  ,4.00    ,4.64   ,5.28   ,5.95   ,6.61
                }
 
+, { "PEAK 0 "  , Set_Peak1      , Get_Peak
+               , Set_Peak2    , Volt_0
+               , 0.0  ,0.0   ,0.0   ,0.59   ,1.20   ,1.85   ,2.54   ,3.31
+               }
+, { "PEAK 2 "  , Set_Peak1      , Get_Peak
+               , Set_Peak2    , Volt_2
+               , 1.20, 1.20, 1.20, 1.20, 1.21, 1.85, 2.54, 3.31
+               }
+, { "PEAK 5 "  , Set_Peak1      , Get_Peak
+               , Set_Peak2    , Volt_5
+               , 3.30, 3.30, 3.30, 3.30, 3.30, 3.30, 3.30, 3.32
+               }
+
+, { "TROUGH 1" , Set_Trough1    , Get_Trough
+               , Set_Trough2    , Volt_1
+               , 0.0, 0.0, 0.02, 0.71, 0.73, 0.73, 0.73, 0.73
+               }
+, { "TROUGH 3" , Set_Trough1    , Get_Trough
+               , Set_Trough2    , Volt_3
+               , 0.0, 0.0, 0.02, 0.73, 1.40, 2.03, 2.05, 2.05
+               }
+, { "TROUGH 5" , Set_Trough1    , Get_Trough
+               , Set_Trough2    , Volt_5
+               , 0.0, 0.0, 0.02, 0.73, 1.40, 2.04, 2.68, 3.33
+               }
 //, { "LEFT "    , Set_Left       , Get_Left
 //               , Set_XVCAOut    , Volt_0
 //               , 9.0  ,9.0   ,9.0   ,9.0    ,9.0    ,9.0    ,9.0    ,9.0
@@ -141,6 +189,7 @@ static const TestV_vec2d_t vtests_vec2d[] =
 
 uint8_t Test_RunSuite( void );
 uint8_t Test_V( const TestV_t* test );
+uint8_t Test_T( const TestT_t* test );
 uint8_t Test_V_vec( const TestV_vec_t* test );
 uint8_t Test_V_vec2d( const TestV_vec2d_t* test );
 float GetVolts( ADC_t chan );

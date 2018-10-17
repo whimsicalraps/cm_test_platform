@@ -12,7 +12,7 @@
 #define TOLERANCE              (float)0.1 // percentage: 0.1 = 10%
 #define VERBOSE 0
 
-static uint8_t _Test_inner( const TestV_t* test );
+static uint8_t _Test_inner( const TestV_t* test, float settle_time );
 static uint8_t Test_PowerUp( void );
 static void Test_Failure( char* error );
 uint8_t Test_RunSuite( void )
@@ -43,6 +43,12 @@ uint8_t Test_RunSuite( void )
         if( Test_V_vec2d( &vtests_vec2d[i] ) ){ failures++; }
         U_PrintNow(); // flush uart
     }
+
+    len = LENGTH(ttests);
+    for( int i=0; i<len; i++ ){
+        if( Test_T( &ttests[i] ) ){ failures++; }
+    }
+
 
     LL_PowerOn_Set(0);
     if( failures ){
@@ -145,11 +151,30 @@ uint8_t Test_V_vec2d( const TestV_vec2d_t* test )
     return Test_V_vec( &sub_t );
 }
 
-static uint8_t _Test_inner( const TestV_t* test )
+uint8_t Test_T( const TestT_t* test )
+{
+    SelectVoltage( test->dest, test->rest_volts );
+    HAL_Delay(test->rest_delay); // wait for base case stabilization
+    // prepare dest
+    TestV_t sub_test = { .name    = test->name
+                       , .dest    = test->dest
+                       , .volts   = test->go_volts
+                       , .channel = test->channel
+                       , .expect  = test->expect
+                       };
+    if(VERBOSE){
+        U_Print("testing ");
+        U_Print(test->name);
+        U_Print(": ");
+    }
+    return _Test_inner( &sub_test, test->read_delay );
+
+}
+static uint8_t _Test_inner( const TestV_t* test, float settle_time )
 {
     uint8_t error = 0;
     SelectVoltage( test->dest, test->volts );
-    HAL_Delay( VOLTAGE_SETTLING_DELAY ); // wait for stabilizing
+    HAL_Delay( settle_time ); // wait for stabilizing
     LL_Adc_Process(); // read the ADCs
     float result = GetVolts( test->channel );
     float t_shift = _Abs(test->expect) < 1.0 ? 0.1 : 0.0;
@@ -184,7 +209,7 @@ uint8_t Test_V( const TestV_t* test )
         U_Print(test->name);
         U_Print(": ");
     }
-    return _Test_inner( test );
+    return _Test_inner( test, VOLTAGE_SETTLING_DELAY );
 }
 
 uint8_t Test_V_V( char* name
