@@ -11,6 +11,8 @@
 #include "lib/hw_setup.h"
 #include "lib/tests.h"
 
+#define FRAMERATE 0x1FFFF
+
 // private fn prototypes
 static void LEDs_Off(void);
 
@@ -18,6 +20,7 @@ static void SystemClock_Config(void);
 static void Error_Handler(void);
 static void MPU_Config(void);
 static void CPU_CACHE_Enable(void);
+
 
 // exported fns
 int main(void)
@@ -35,9 +38,10 @@ int main(void)
     HW_Init();
 
 	U_PrintNow();  // print any queued debug messages
+    int fr = FRAMERATE;
 	while(1){
         //TODO add the 'presence' check here
-        if( HW_RunPress() ){
+        if( HW_Press( Sw_Run ) ){
             LEDs_Off();
             LL_Led_Set( LED_Running, 1);
             uint8_t error = Test_RunSuite();
@@ -48,22 +52,30 @@ int main(void)
                 if( error & 0x1 ){
                     U_PrintLn("Power System Failure");
                     LEDs_Off();
-                    LL_Led_Set( LED_1, 1 ); // TODO BLINK
+                    LL_Led_Flash( LED_1, 1 ); // TODO BLINK
                 }
                 if( error & 0x2 ){
                     U_PrintLn("Voltage test failure");
                     LEDs_Off();
-                    LL_Led_Set( LED_2, 1 ); // TODO BLINK
+                    LL_Led_Flash( LED_2, 1 ); // TODO BLINK
                 }
                 if( error & 0x4 ){
                     U_PrintLn("Timing test failure");
                     LEDs_Off();
-                    LL_Led_Set( LED_3, 1 ); // TODO BLINK
+                    LL_Led_Flash( LED_3, 1 ); // TODO BLINK
                 }
             }
             LL_Led_Set( LED_Running, 0);
             U_PrintLn("\n\n\n");
         }
+        if(--fr <= 0){
+            LL_Led_Step();
+            fr = FRAMERATE;
+        }
+        if( HW_Press( Sw_Left ) ){
+            LEDs_Off();
+        }
+
 	    U_PrintNow();  // print any queued debug messages
     }
 	return 0;
@@ -74,6 +86,9 @@ static void LEDs_Off(void)
     LL_Led_Set( LED_1, 0 );
     LL_Led_Set( LED_2, 0 );
     LL_Led_Set( LED_3, 0 );
+    LL_Led_Flash( LED_1, 0 );
+    LL_Led_Flash( LED_2, 0 );
+    LL_Led_Flash( LED_3, 0 );
 }
 
 // LOW LEVEL SYS INIT

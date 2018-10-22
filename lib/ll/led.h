@@ -26,3 +26,5 @@ typedef enum{ LED_Running
 
 void LL_Led_Init( void );
 void LL_Led_Set( LED_t led, uint8_t state );
+void LL_Led_Flash( LED_t led, uint8_t state );
+void LL_Led_Step( void );

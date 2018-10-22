@@ -74,9 +74,14 @@ typedef enum{ Chan_Source1
             , Chan_Dest2
 } Chan_t;
 
+typedef enum{ Sw_Run
+            , Sw_Left
+            , Sw_Right
+} Switch_t;
+
 void SelectVoltage( Destination_t d, Volts_t v );
 
 void LL_State_Init( void );
 void LL_PowerOn_Set( uint8_t state );
 void LL_DigiSwitch_Set( Chan_t ch, uint8_t state );
-uint8_t LL_isSwitchDown( uint8_t which ); // TODO enum which
+uint8_t LL_isSwitchDown( Switch_t which ); // TODO enum which

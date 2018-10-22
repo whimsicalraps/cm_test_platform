@@ -107,7 +107,7 @@ void LL_DigiSwitch_Set( Chan_t ch, uint8_t state )
     }
 }
 
-uint8_t LL_isSwitchDown( uint8_t which )
+uint8_t LL_isSwitchDown( Switch_t which )
 {
     const uint32_t pin[] = { STATE_SW1_PIN
                            , STATE_SW2_PIN

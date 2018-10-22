@@ -186,6 +186,7 @@ uint8_t Test_T_relative( void )
     SelectVoltage( Set_Crease, Volt_0 );
     float result = 0.0;
     uint8_t error = 0;
+    int timeout = 20;
     while(1){
         LL_Adc_Process();
         result = GetVolts( Get_Location );
@@ -196,6 +197,7 @@ uint8_t Test_T_relative( void )
             SelectVoltage( Set_Crease, Volt_n5 );
             HAL_Delay(100);
         } else { break; }
+        if(--timeout <= 0){error = 2; break;}
     }
     float expect_shift = 1.00;
     if(result < 1.8){
